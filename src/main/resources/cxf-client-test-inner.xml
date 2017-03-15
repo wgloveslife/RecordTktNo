@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-4.2.xsd 
+	http://cxf.apache.org/transports/http/configuration 
+	http://cxf.apache.org/schemas/configuration/http-conf.xsd 
+	http://cxf.apache.org/jaxws 
+	http://cxf.apache.org/schemas/jaxws.xsd">
+    
+    <http-conf:conduit name="*.http-conduit">
+		<http-conf:client ConnectionTimeout="90000" ReceiveTimeout="90000"/> 
+	</http-conf:conduit>
+	
+    <!-- 订单 -->
+    <bean id="b2GOrderManagerFacadeServicePortType" class="com.cares.ceaec.webservice.facade.order.B2GOrderManagerFacadeServicePortType" 
+    	factory-bean="b2GOrderManagerFacadeServicePortTypeFactory" factory-method="create" />
+    <bean id="b2GOrderManagerFacadeServicePortTypeFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+    	<property name="serviceClass" value="com.cares.ceaec.webservice.facade.order.B2GOrderManagerFacadeServicePortType" />
+    	<property name="address" value="http://172.20.18.134:8080/CEAEC/services/B2gOrderManagerFacadeService" />
+    </bean>
+    
+</beans>

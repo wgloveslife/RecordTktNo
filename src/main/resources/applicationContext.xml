@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+	
+	<context:component-scan base-package="com.jetair.mub2gmjob.service,com.jetair.mub2gmjob.persistence.mapper,com.jetair.mub2gmjob.test" />
+	<context:property-placeholder location="classpath:quartzExp.properties,classpath:appConfig.properties"/>
+	
+	<!-- 出票记录查询业务 -->
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ticketMonitorJob" />
+		<property name="targetMethod" value="executeRecordTktNo" />
+		<!-- 关闭并发运行 -->
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<!-- 触发器 -->
+	<bean id="cronTriggerOfTktNo" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    	<property name="jobDetail" ref="jobDetail"/>
+    	<property name="cronExpression" value="${QUERYTICKETNO_CRONEXPRESSION}" />
+	</bean>
+	
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTriggerOfTktNo" />
+			</list>
+		</property>
+		<property name="configLocation" value="classpath:quartz.properties"/>
+	</bean>
+	
+	<!-- myBatis config begin -->
+	<!-- define the SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:SqlMapConfig.xml" />
+		<property name="typeAliasesPackage" value="com.jetair.mub2gmjob.domain" />
+	</bean>
+
+	<!-- scan for mappers and let them be autowired -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.jetair.mub2gmjob.persistence.mapper" />
+	</bean>
+	<!-- myBatis config end -->
+    
+    <!-- transaction -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+    	<property name="dataSource" ref="dataSource"/>  
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+</beans>

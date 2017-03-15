@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 测试时，status改为trace/debug/info/warn/error/fatal -->
+<Configuration status="trace">
+
+	<Appenders>
+		<!-- Console输出 -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout>
+				<Charset>utf-8</Charset>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n</Pattern>
+			</PatternLayout>
+		</Console>
+	</Appenders>
+	
+	<!-- 测试时修改为需要的级别及需要的输出 -->
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Console"/>
+		</Root>
+	</Loggers>
+	
+</Configuration>
