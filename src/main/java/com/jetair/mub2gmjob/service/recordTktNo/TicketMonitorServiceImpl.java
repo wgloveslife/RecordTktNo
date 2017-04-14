@@ -41,6 +41,7 @@ public class TicketMonitorServiceImpl implements TicketMonitorService {
 	private B2GOrderManagerFacadeServicePortType b2GOrderManagerFacadeServicePortType;
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void recordTktNo() {
 		List<TravelOrderLogDo> queryTravelOrderLog = new ArrayList<TravelOrderLogDo>();
 		List<TicketInfoResDto> ticketList = new ArrayList<TicketInfoResDto>();
